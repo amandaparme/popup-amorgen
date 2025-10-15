@@ -307,7 +307,7 @@ async function showYesPopup(){
     customClass: { confirmButton: 'btn-primary' },
     didOpen: async () => {
       const el = document.getElementById("yesText");
-      const text = "Que ótimo! Fico muito feliz.\n\nP.S.: Me conta depois, por favor. 🤡";
+      const text = "Que ótimo! Fico muito feliz.\n\nP.S.: Me conta depois, por favor. <img src='./img/clown.png' alt='clown' style='width:22px;height:auto;vertical-align:middle;margin-left:4px;'>";
       await typeText(el, text, 28);
     }
   });
@@ -331,7 +331,7 @@ async function showNoPopup(){
     customClass: { confirmButton: 'btn-secondary' },
     didOpen: async () => {
       const el = document.getElementById("noText");
-      const text = "Tudo bem! Espero que em breve role.\n\nP.S.: Me conta depois, por favor. 🤡";
+      const text = "Tudo bem! Espero que em breve role.\n\nP.S.: Me conta depois, por favor. <img src='./img/clown.png' alt='clown' style='width:22px;height:auto;vertical-align:middle;margin-left:4px;'>";
       await typeText(el, text, 28);
     }
   });
@@ -358,3 +358,4 @@ async function showNoPopup(){
 
 </body>
 </html>
+

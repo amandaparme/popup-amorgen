@@ -18,27 +18,26 @@
   --progress-color:#03c9ad;
   --cancel-yellow:#febf12;
 }
-html,body{height:100%;margin:0;background:var(--page-bg);font-family:var(--font-stack);-webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;}
-.overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.18);z-index:9999;overflow:auto;padding:20px;box-sizing:border-box;}
-.popup{width:420px;max-width:94%;background:var(--popup-bg);border:var(--border-size) solid var(--border);border-radius:var(--radius);box-shadow:0 20px 40px rgba(0,0,0,0.14);overflow:hidden;font-weight:800;user-select:none;}
-.popup-header{height:36px;display:flex;align-items:center;padding:0 12px;box-sizing:border-box;border-bottom:var(--border-size) solid var(--border);position:relative;}
-.header-circles{display:flex;gap:8px;align-items:center;margin-right:10px;}
-.circle{width:12px;height:12px;border-radius:50%;border:2px solid var(--border);box-sizing:border-box;}
-.header-stripe-title{position:absolute;left:50%;transform:translateX(-50%);font-size:12px;color:var(--popup-bg);font-weight:900;letter-spacing:0.6px;}
-.popup-body{padding:14px;display:flex;flex-direction:column;gap:12px;align-items:stretch;}
-.title-row{display:flex;align-items:center;gap:12px;justify-content:center;font-size:18px;color:#000;font-weight:900;text-align:center;}
-.icon-lg{width:64px;height:auto;flex-shrink:0;}
-.row{display:flex;gap:12px;align-items:flex-start;}
-.bubble{border:var(--border-size) solid var(--border);background:var(--popup-bg);border-radius:8px;padding:10px 12px;font-size:16px;color:#000;white-space:pre-line;max-width:calc(100% - 80px);box-sizing:border-box;}
-.typing-caret::after{content:"";display:inline-block;width:8px;height:18px;background:#000;margin-left:6px;animation:blink 1s steps(1) infinite;vertical-align:middle;}
+html,body{height:100%;margin:0;background:var(--page-bg);font-family:var(--font-stack);-webkit-font-smoothing:antialiased;display:flex;align-items:center;justify-content:center;color:#000}
+.overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.18);z-index:9999;overflow:auto;padding:20px;box-sizing:border-box}
+.popup{width:420px;max-width:94%;background:var(--popup-bg);border:var(--border-size) solid var(--border);border-radius:var(--radius);box-shadow:0 20px 40px rgba(0,0,0,0.14);overflow:hidden;font-weight:800;user-select:none}
+.popup-header{height:36px;display:flex;align-items:center;padding:0 12px;box-sizing:border-box;border-bottom:var(--border-size) solid var(--border);position:relative}
+.header-circles{display:flex;gap:8px;align-items:center;margin-right:10px}
+.circle{width:12px;height:12px;border-radius:50%;border:2px solid var(--border);box-sizing:border-box}
+.popup-body{padding:14px;display:flex;flex-direction:column;gap:12px;align-items:stretch}
+.title-row{display:flex;align-items:center;gap:12px;justify-content:center;font-size:18px;color:#000;font-weight:900;text-align:center}
+.icon-lg{width:64px;height:auto;flex-shrink:0}
+.row{display:flex;gap:12px;align-items:flex-start}
+.bubble{border:var(--border-size) solid var(--border);background:var(--popup-bg);border-radius:8px;padding:10px 12px;font-size:16px;color:#000;white-space:pre-line;max-width:calc(100% - 80px);box-sizing:border-box;word-break:break-word}
+.typing-caret::after{content:"";display:inline-block;width:8px;height:18px;background:#000;margin-left:6px;animation:blink 1s steps(1) infinite;vertical-align:middle}
 @keyframes blink{50%{opacity:0}}
-.progress-wrap{border:2px solid var(--border);background:var(--popup-bg);padding:6px;border-radius:8px;display:flex;gap:6px;box-sizing:border-box;}
-.progress-block{flex:1;height:24px;background:var(--progress-color);opacity:0.14;border-radius:6px;border:1px solid var(--border);transition:opacity 140ms linear;}
-.actions{display:flex;justify-content:center;gap:12px;margin-top:6px;}
-.btn{border:var(--border-size) solid var(--border);border-radius:8px;padding:8px 18px;font-family:var(--font-stack);font-weight:800;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,0.06);font-size:15px;}
-.btn-teal{background:var(--progress-color);color:#fff}
+.progress-wrap{border:var(--border-size) solid var(--border);background:var(--popup-bg);padding:6px;border-radius:8px;display:flex;gap:6px;box-sizing:border-box}
+.progress-block{flex:1;height:24px;background:var(--progress-color);opacity:0.14;border-radius:6px;border:var(--border-size) solid var(--border);transition:opacity 140ms linear}
+.actions{display:flex;justify-content:center;gap:12px;margin-top:6px}
+.btn{border:var(--border-size) solid var(--border);border-radius:8px;padding:8px 18px;font-family:var(--font-stack);font-weight:800;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,0.06);font-size:15px;background:transparent;color:#000}
+.btn-teal{background:var(--progress-color);color:#000}
 .btn-yellow{background:var(--cancel-yellow);color:#000}
-.btn-disabled{opacity:0.6;pointer-events:none}
+.btn-disabled{pointer-events:none}
 .icon-inline{width:28px;height:auto;vertical-align:middle;margin-right:8px}
 @media(max-width:460px){.popup{width:92%;padding:0}.icon-lg{width:50px}.bubble{font-size:15px;max-width:calc(100% - 70px)}.title-row{font-size:16px}}
 #log-toggle{position:fixed;right:14px;bottom:14px;z-index:10000;background:#fff;border:2px solid var(--border);padding:8px 10px;border-radius:10px;font-weight:800;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.12)}
@@ -58,10 +57,22 @@ const overlay=document.getElementById("overlay")
 function showOverlay(html){overlay.innerHTML=html;overlay.style.display="flex";document.body.style.overflow="hidden"}
 function hideOverlay(){overlay.style.display="none";overlay.innerHTML="";document.body.style.overflow=""}
 function headerStripe(color,circleColor){return`<div class="popup"><div class="popup-header" style="background:${color};"><div class="header-circles" style="margin-left:4px;"><div class="circle" style="background:${circleColor};border-color:var(--border);"></div><div class="circle" style="background:${circleColor};border-color:var(--border);"></div><div class="circle" style="background:${circleColor};border-color:var(--border);"></div></div></div><div class="popup-body">`}
-async function showLoadingPopup(){
-  const html=headerStripe(getComputedStyle(document.documentElement).getPropertyValue('--loading-header')||"#f85c2a", "#fffbea") + `
+
+async function typeTextWithCaret(el, text, speed=28, after){
+  el.classList.add("typing-caret");
+  el.textContent = "";
+  for(let i=0;i<text.length;i++){
+    el.textContent += text[i];
+    await sleep(speed);
+  }
+  el.classList.remove("typing-caret");
+  if(typeof after === "function") after();
+}
+
+function showLoadingPopup(){
+  const html=headerStripe(getComputedStyle(document.documentElement).getPropertyValue('--loading-header')||"#f85c2a","#fffbea")+`
     <div style="margin-top:6px;">
-      <div style="display:flex;justify-content:center;margin-bottom:6px;"><div class="title-row"><img src="./img/hourglass.png" class="icon-inline" alt="hourglass">CARREGANDO...</div></div>
+      <div style="display:flex;justify-content:center;margin-bottom:10px;"><div class="title-row">CARREGANDO...</div></div>
       <div class="progress-wrap" aria-hidden="true">${Array(6).fill('<div class="progress-block"></div>').join('')}</div>
     </div>
     <div class="actions" style="margin-top:10px;">
@@ -70,21 +81,27 @@ async function showLoadingPopup(){
   </div></div>`;
   showOverlay(html)
   const blocks=overlay.querySelectorAll(".progress-block")
-  for(let cycle=0;cycle<3;cycle++){
-    for(let i=0;i<blocks.length;i++){blocks[i].style.opacity="1";await sleep(110)}
-    await sleep(180)
-    blocks.forEach(b=>b.style.opacity="0.14")
-    await sleep(150)
-  }
-  hideOverlay()
-  showQuestionPopup()
+  ;(async ()=>{
+    for(let cycle=0;cycle<3;cycle++){
+      for(let i=0;i<blocks.length;i++){blocks[i].style.opacity="1";await sleep(110)}
+      await sleep(180)
+      blocks.forEach(b=>b.style.opacity="0.14")
+      await sleep(150)
+    }
+    hideOverlay()
+    showQuestionPopup()
+  })()
 }
+
 function showQuestionPopup(){
-  const html=headerStripe(getComputedStyle(document.documentElement).getPropertyValue('--question-header')||"#febf12", "#f85c2a")+`
+  const html=headerStripe(getComputedStyle(document.documentElement).getPropertyValue('--question-header')||"#febf12","#f85c2a")+`
     <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
-      <div class="row" style="justify-content:center;">
+      <div class="row" style="justify-content:center;align-items:center;">
         <img src="./img/interrogation-mark.png" class="icon-lg" alt="?">
-        <div class="title-row">JÁ ESTAMOS NAMORANDO?</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-start;line-height:1;">
+          <div style="font-size:18px;font-weight:900;">JÁ ESTAMOS</div>
+          <div style="font-size:18px;font-weight:900;">NAMORANDO?</div>
+        </div>
       </div>
     </div>
     <div class="actions" style="margin-top:12px;">
@@ -96,48 +113,45 @@ function showQuestionPopup(){
   document.getElementById("btn-yes").addEventListener("click",()=>{recordChoice("SIM");hideOverlay();showYesPopup()})
   document.getElementById("btn-no").addEventListener("click",()=>{recordChoice("AINDA NÃO");hideOverlay();showNoPopup()})
 }
+
 function showYesPopup(){
   const html=headerStripe(getComputedStyle(document.documentElement).getPropertyValue('--answer-header')||"#01caad","#fffbea")+`
     <div class="row">
       <img class="icon-lg" src="./img/in-love.png" alt="in-love">
       <div style="flex:1;">
         <div class="bubble" id="yesBubble"></div>
-        <div id="yesClown" style="display:none;margin-top:8px;"></div>
       </div>
     </div>
     <div class="actions"><button id="btn-close-yes" class="btn btn-yellow">FECHAR</button></div>
   </div></div>`
   showOverlay(html)
-  const bubble=document.getElementById("yesBubble");const clownHolder=document.getElementById("yesClown")
+  const bubble=document.getElementById("yesBubble")
   const text="RESPOSTA POSITIVA (texto de exemplo).\n\nP.S.: (texto adicional de exemplo)."
-  (async ()=>{
-    bubble.textContent=""
-    for(let i=0;i<text.length;i++){bubble.textContent+=text[i];await sleep(28)}
-    const img=document.createElement("img");img.src="./img/clown.png";img.alt="clown";img.style.width="28px";img.style.height="auto";img.style.verticalAlign="middle";clownHolder.appendChild(img);clownHolder.style.display="block"
-  })()
+  typeTextWithCaret(bubble,text,28,()=>{
+    const img=document.createElement("img");img.src="./img/clown.png";img.alt="clown";img.style.width="28px";img.style.height="auto";img.style.verticalAlign="middle";img.style.marginLeft="6px";bubble.appendChild(document.createTextNode(" "));bubble.appendChild(img)
+  })
   document.getElementById("btn-close-yes").addEventListener("click",()=>{hideOverlay()})
 }
+
 function showNoPopup(){
   const html=headerStripe(getComputedStyle(document.documentElement).getPropertyValue('--answer-header')||"#01caad","#fffbea")+`
     <div class="row">
       <img class="icon-lg" src="./img/smile.png" alt="smile">
       <div style="flex:1;">
         <div class="bubble" id="noBubble"></div>
-        <div id="noClown" style="display:none;margin-top:8px;"></div>
       </div>
     </div>
     <div class="actions"><button id="btn-close-no" class="btn btn-yellow">FECHAR</button></div>
   </div></div>`
   showOverlay(html)
-  const bubble=document.getElementById("noBubble");const clownHolder=document.getElementById("noClown")
+  const bubble=document.getElementById("noBubble")
   const text="RESPOSTA NEUTRA (texto de exemplo).\n\nP.S.: (texto adicional de exemplo)."
-  (async ()=>{
-    bubble.textContent=""
-    for(let i=0;i<text.length;i++){bubble.textContent+=text[i];await sleep(28)}
-    const img=document.createElement("img");img.src="./img/clown.png";img.alt="clown";img.style.width="28px";img.style.height="auto";img.style.verticalAlign="middle";clownHolder.appendChild(img);clownHolder.style.display="block"
-  })()
+  typeTextWithCaret(bubble,text,28,()=>{
+    const img=document.createElement("img");img.src="./img/clown.png";img.alt="clown";img.style.width="28px";img.style.height="auto";img.style.verticalAlign="middle";img.style.marginLeft="6px";bubble.appendChild(document.createTextNode(" "));bubble.appendChild(img)
+  })
   document.getElementById("btn-close-no").addEventListener("click",()=>{hideOverlay()})
 }
+
 window.addEventListener("load",()=>{setTimeout(()=>{showLoadingPopup()},280)})
 </script>
 </body>

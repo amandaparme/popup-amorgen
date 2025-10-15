@@ -1,361 +1,198 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Pop-up amorgen</title>
-  <!-- SweetAlert2 via CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pop-up amorgen</title>
 
-  <style>
-    /* page */
-    html,body{
-      height:100%;
-      margin:0;
-      background: #fff6d7;
-      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    /* SweetAlert base override to match reference */
-    .swal2-popup {
-      width: 420px !important;
-      max-width: 92% !important;
-      background: linear-gradient(180deg, #fffbe8 0%, #fff2ce 100%) !important;
-      border: 6px solid #2b1f14 !important; /* thick dark border like reference */
-      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
-      border-radius: 16px !important;
-      padding: 18px !important;
-    }
+<style>
+  body {
+    background-color: #fff6d7;
+    font-family: Consolas, monospace;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
 
-    .swal2-title {
-      display:flex;
-      align-items:center;
-      gap:12px;
-      justify-content:center;
-      font-weight:800 !important;
-      font-size:20px !important;
-      color:#1a1a1a;
-      margin:0 0 8px;
-    }
+  .swal2-popup {
+    border: 3px solid black !important;
+    border-radius: 8px !important;
+    background-color: #fffbea !important;
+    box-shadow: none !important;
+  }
 
-    .swal2-html-container {
-      color:#1a1a1a;
-      font-size:15px;
-      line-height:1.45;
-      text-align:left;
-      padding:0;
-    }
+  .swal2-title {
+    color: #f85b2c !important;
+    font-size: 20px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px !important;
+  }
 
-    /* custom "speech bubble" used inside html */
-    .bubble {
-      background: #ffd867;
-      border: 3px solid #1a1a1a;
-      border-radius: 12px;
-      padding: 12px 14px;
-      display:inline-block;
-      max-width: 260px;
-      box-shadow: inset 0 -4px 0 rgba(0,0,0,0.03);
-      font-weight:600;
-    }
+  .progress-bar {
+    width: 100%;
+    height: 14px;
+    border: 3px solid black;
+    border-radius: 8px;
+    background-color: #fffbea;
+    overflow: hidden;
+    margin-top: 15px;
+  }
 
-    /* typing cursor */
-    .typing {
-      white-space: pre-wrap;
-      overflow: hidden;
-      border-right: 3px solid #1a1a1a;
-      padding-right:6px;
-    }
+  .progress-fill {
+    width: 0%;
+    height: 100%;
+    background-color: #03c9ad;
+    border-right: 3px solid black;
+    transition: width 0.7s linear;
+  }
 
-    /* buttons */
-    .swal2-actions {
-      display:flex;
-      gap:10px;
-      justify-content:center;
-      margin-top:14px;
-    }
+  .swal2-confirm, .swal2-cancel {
+    font-family: Consolas, monospace !important;
+    font-weight: bold !important;
+    border: 3px solid black !important;
+    border-radius: 8px !important;
+    background-color: #febf12 !important;
+    color: black !important;
+    box-shadow: none !important;
+    font-size: 15px !important;
+    padding: 8px 20px !important;
+  }
 
-    .btn-primary {
-      background: linear-gradient(180deg,#ff7a7a,#ff5a5a);
-      color:white;
-      border:3px solid #2b1f14;
-      padding:10px 18px;
-      border-radius:12px;
-      font-weight:800;
-      box-shadow: 0 6px 0 rgba(0,0,0,0.08);
-    }
-    .btn-secondary {
-      background: linear-gradient(180deg,#fff,#ffe8b0);
-      color:#1a1a1a;
-      border:3px solid #2b1f14;
-      padding:10px 18px;
-      border-radius:12px;
-      font-weight:800;
-      box-shadow: 0 6px 0 rgba(0,0,0,0.04);
-    }
-    .swal2-confirm, .swal2-cancel {
-      font-family: inherit !important;
-      font-weight:800 !important;
-      border-radius:12px !important;
-    }
+  .popup-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 10px;
+  }
 
-    /* loading bar style */
-    .loading-bar {
-      width: 320px;
-      max-width:90%;
-      height:22px;
-      border-radius:10px;
-      border:3px solid #2b1f14;
-      padding:4px;
-      background:#fff;
-      display:flex;
-      gap:6px;
-      margin:10px auto 6px;
-      box-sizing:border-box;
-    }
-    .loading-block{
-      flex:1;
-      background:#ffbf00;
-      opacity:0.12;
-      border-radius:6px;
-      transition:opacity 160ms ease;
-    }
+  .popup-row img {
+    width: 46px;
+    height: auto;
+  }
 
-    /* icons inside popups */
-    .icon-left { width:72px; height:auto; border-radius:8px; }
-    .popup-row { display:flex; gap:12px; align-items:flex-start; }
+  .bubble {
+    border: 3px solid black;
+    background-color: #fffbea;
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: black;
+    white-space: pre-line;
+    font-size: 16px;
+  }
 
-    /* small on-screen log panel (for dev/owner) */
-    #owner-log {
-      position: fixed;
-      right: 14px;
-      bottom: 14px;
-      background: rgba(0,0,0,0.7);
-      color: white;
-      padding:10px 12px;
-      border-radius:10px;
-      font-size:13px;
-      z-index:999999;
-      max-width:320px;
-      display:none; /* hidden by default - toggle with button below */
-    }
-    #log-toggle {
-      position: fixed;
-      right: 14px;
-      bottom: 14px;
-      z-index:999999;
-      background:#fff;
-      border:2px solid #2b1f14;
-      padding:8px 10px;
-      border-radius:10px;
-      cursor:pointer;
-      font-weight:700;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-    }
+  .typing::after {
+    content: '|';
+    animation: blink 1s infinite;
+  }
 
-    @media(max-width:480px){
-      .swal2-popup{ width:92% !important; padding:12px !important; border-radius:12px !important; }
-      .icon-left{ width:56px; }
-      .bubble{ max-width:160px; font-size:14px; }
-    }
-  </style>
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+</style>
 </head>
 <body>
-
-<!-- small toggle for owner to view logged clicks -->
-<button id="log-toggle" title="Mostrar/ocultar registro">Ver registros</button>
-<div id="owner-log" aria-hidden="true"></div>
-
 <script>
-/* ---------- Utility: typing effect ---------- */
-function typeText(el, text, speed = 24) {
-  return new Promise(resolve => {
-    let i = 0;
-    el.textContent = "";
-    el.style.borderRight = "3px solid #1a1a1a";
-    const t = setInterval(() => {
-      el.textContent = text.slice(0, i);
-      i++;
-      if(i > text.length){
-        clearInterval(t);
-        el.style.borderRight = "none";
-        resolve();
-      }
-    }, speed);
-  });
-}
-
-/* ---------- A simple client-side log (so you can see who clicked what) ---------- */
-const clickLog = []; // will hold timestamped choices
-
-function recordChoice(choice, meta = {}) {
-  const entry = {
-    when: new Date().toISOString(),
-    choice,
-    meta
-  };
-  clickLog.push(entry);
-  console.log("Pop-up click registrado:", entry);
-
-  // show in owner panel if visible
-  const panel = document.getElementById("owner-log");
-  if(panel.style.display !== "none"){
-    panel.innerText = clickLog.map((e,i)=> `${i+1}. [${e.when}] → ${e.choice}`).reverse().join("\n");
+async function typeText(element, text, delay) {
+  element.textContent = "";
+  for (let i = 0; i < text.length; i++) {
+    element.textContent += text[i];
+    await new Promise(r => setTimeout(r, delay));
   }
-
-  // OPTIONAL: enviar para seu servidor/webhook (substitua URL abaixo pela sua)
-  // se quiser ativar, troque webhookUrl por sua URL de coleta e descomente fetch.
-  const webhookUrl = ""; // ex: "https://meuservidor.com/collect-choice"
-  if(webhookUrl){
-    fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(entry)
-    }).catch(err => console.warn("Erro enviando webhook:", err));
-  }
-
-  // opcional: salvar localmente
-  try { localStorage.setItem("popup_click_log", JSON.stringify(clickLog)); } catch(e){}
 }
 
-/* ---------- Toggle owner panel ---------- */
-document.getElementById("log-toggle").addEventListener("click", () => {
-  const panel = document.getElementById("owner-log");
-  if(panel.style.display === "none" || panel.style.display === ""){
-    panel.style.display = "block";
-    panel.innerText = clickLog.length ? clickLog.map((e,i)=> `${i+1}. [${e.when}] → ${e.choice}`).reverse().join("\n")
-                                      : "Sem registros ainda.";
-  } else {
-    panel.style.display = "none";
-  }
-});
-
-/* ---------- Loading animation (3 passes) ---------- */
-async function showLoading() {
-  await Swal.fire({
-    title: '<span style="letter-spacing:1px;">CARREGANDO...</span>',
-    html: `<div class="loading-bar" id="loading-bar">${Array(8).fill('<div class="loading-block"></div>').join('')}</div>`,
-    showConfirmButton: false,
-    allowOutsideClick:false,
-    backdrop:true,
-    didOpen: () => animateLoading()
-  });
-}
-
-async function animateLoading(){
-  const blocks = document.querySelectorAll(".loading-block");
-  for(let round=0; round<3; round++){
-    for(let i=0;i<blocks.length;i++){
-      blocks[i].style.opacity = "1";
-      await new Promise(r => setTimeout(r, 90));
-    }
-    for(let i=0;i<blocks.length;i++){
-      blocks[i].style.opacity = "0.12";
-    }
-    await new Promise(r => setTimeout(r, 180));
-  }
-  // close current Swal and show question
-  Swal.close();
-  showQuestion();
-}
-
-/* ---------- Question popup ---------- */
-function showQuestion(){
-  Swal.fire({
-    title: `<div style="display:flex;align-items:center;flex-direction:column;">
-              <img src="./img/interrogation-mark.png" alt="?" style="width:64px;height:auto;margin-bottom:6px;">
-              <strong style="font-size:18px;">Já estamos namorando?</strong>
-            </div>`,
-    html: `<div style="text-align:center;margin-top:6px;font-weight:700;">Escolha com sinceridade</div>`,
-    showCancelButton: true,
-    showCloseButton: false,
-    confirmButtonText: 'SIM',
-    cancelButtonText: 'AINDA NÃO',
-    customClass: {
-      confirmButton: 'btn-primary',
-      cancelButton: 'btn-secondary'
-    },
-    allowOutsideClick: false,
-    backdrop: true
-  }).then(result => {
-    if(result.isConfirmed){
-      recordChoice("SIM");
-      showYesPopup();
-    } else {
-      recordChoice("AINDA NÃO");
-      showNoPopup();
-    }
-  });
-}
-
-/* ---------- SIM popup ---------- */
-async function showYesPopup(){
-  await Swal.fire({
-    title: `<div class="swal2-title"><img src="./img/heart.png" style="width:46px;height:auto;"> <span>Que bom!</span></div>`,
+async function showLoadingPopup() {
+  const swal = Swal.fire({
+    title: `<img src="./img/hourglass.png" style="width:22px;vertical-align:middle;margin-right:6px;">CARREGANDO...`,
     html: `
-      <div class="popup-row" style="margin-top:6px;">
-        <img class="icon-left" src="./img/in love.png" alt="in love">
+      <div class="progress-bar">
+        <div id="progress" class="progress-fill"></div>
+      </div>
+    `,
+    showConfirmButton: false,
+    showCancelButton: true,
+    cancelButtonText: "CANCELAR",
+    allowOutsideClick: false,
+    didOpen: () => simulateProgress()
+  });
+
+  async function simulateProgress() {
+    const progress = document.getElementById("progress");
+    for (let i = 0; i < 3; i++) {
+      progress.style.width = "0%";
+      await new Promise(r => setTimeout(r, 200));
+      progress.style.width = "100%";
+      await new Promise(r => setTimeout(r, 1000));
+    }
+    showQuestionPopup();
+  }
+}
+
+async function showQuestionPopup() {
+  const result = await Swal.fire({
+    title: `<img src="./img/interrogation-mark.png" style="width:22px;vertical-align:middle;margin-right:6px;">JÁ ESTAMOS NAMORANDO?`,
+    showCancelButton: true,
+    confirmButtonText: "SIM",
+    cancelButtonText: "AINDA NÃO",
+    reverseButtons: true,
+    allowOutsideClick: false,
+  });
+
+  if (result.isConfirmed) showYesPopup();
+  else showNoPopup();
+}
+
+async function showYesPopup() {
+  await Swal.fire({
+    title: `<img src="./img/heart.png" style="width:22px;vertical-align:middle;margin-right:6px;">QUE ÓTIMO!`,
+    html: `
+      <div class="popup-row">
+        <img src="./img/in-love.png" alt="in love">
         <div>
           <div class="bubble typing" id="yesText"></div>
         </div>
       </div>
     `,
-    showConfirmButton: true,
-    confirmButtonText: 'Fechar',
+    confirmButtonText: "FECHAR",
     allowOutsideClick: false,
-    customClass: { confirmButton: 'btn-primary' },
     didOpen: async () => {
       const el = document.getElementById("yesText");
-      const text = "Que ótimo! Fico muito feliz.\n\nP.S.: Me conta depois, por favor. <img src='./img/clown.png' alt='clown' style='width:22px;height:auto;vertical-align:middle;margin-left:4px;'>";
+      const text = "Fico muito feliz!\n\nP.S.: Me comunique a decisão pois não soube desenvolver um site em que eu pudesse acessá-la. <img src='./img/clown.png' alt='clown' style='width:22px;height:auto;vertical-align:middle;margin-left:4px;'>";
       await typeText(el, text, 28);
     }
   });
 }
 
-/* ---------- NÃO popup ---------- */
-async function showNoPopup(){
+async function showNoPopup() {
   await Swal.fire({
-    title: `<div class="swal2-title"><img src="./img/hourglass.png" style="width:46px;height:auto;"> <span>Tudo bem</span></div>`,
+    title: `<img src="./img/hourglass.png" style="width:22px;vertical-align:middle;margin-right:6px;">TUDO BEM!`,
     html: `
-      <div class="popup-row" style="margin-top:6px;">
-        <img class="icon-left" src="./img/smile.png" alt="smile">
+      <div class="popup-row">
+        <img src="./img/smile.png" alt="smile">
         <div>
           <div class="bubble typing" id="noText"></div>
         </div>
       </div>
     `,
-    showConfirmButton: true,
-    confirmButtonText: 'Fechar',
+    confirmButtonText: "FECHAR",
     allowOutsideClick: false,
-    customClass: { confirmButton: 'btn-secondary' },
     didOpen: async () => {
       const el = document.getElementById("noText");
-      const text = "Tudo bem! Espero que em breve role.\n\nP.S.: Me conta depois, por favor. <img src='./img/clown.png' alt='clown' style='width:22px;height:auto;vertical-align:middle;margin-left:4px;'>";
+      const text = "Espero que em breve role!\n\nP.S.: Me comunique a decisão pois não soube desenvolver um site em que eu pudesse acessá-la. <img src='./img/clown.png' alt='clown' style='width:22px;height:auto;vertical-align:middle;margin-left:4px;'>";
       await typeText(el, text, 28);
     }
   });
 }
 
-/* ---------- Inicia tudo ---------- */
-(async function init(){
-  // try to load previous local log (optional)
-  try{
-    const saved = localStorage.getItem("popup_click_log");
-    if(saved) {
-      const arr = JSON.parse(saved);
-      if(Array.isArray(arr)) {
-        arr.forEach(e => clickLog.push(e));
-      }
-    }
-  }catch(e){}
-
-  // small delay to make sure UI is ready
-  await new Promise(r => setTimeout(r, 350));
-  showLoading();
-})();
+window.onload = showLoadingPopup;
 </script>
-
 </body>
 </html>
-

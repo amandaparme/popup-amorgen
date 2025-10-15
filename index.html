@@ -1,225 +1,468 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Pop-up amorgen</title>
 
-<!-- SweetAlert2 CDN -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <style>
-  body {
-    background-color: #fff6d7;
-    font-family: Consolas, monospace;
-    font-weight: bold;
+  :root{
+    --page-bg: #fff6d7;
+    --popup-bg: #fffbea;
+    --border: #000000;
+    --border-size: 3px;
+    --radius: 10px;
+    --font-stack: "Consolas", monospace;
+    --loading-header: #f85c2a;     /* CARREGANDO header */
+    --question-header: #febf12;    /* JÁ ESTAMOS NAMORANDO? header */
+    --answer-header: #01caad;      /* QUE ÓTIMO / TUDO BEM header */
+    --progress-color: #03c9ad;
+    --cancel-yellow: #febf12;
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    background: var(--page-bg);
+    font-family: var(--font-stack);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  /* overlay */
+  .overlay {
+    position: fixed;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    margin: 0;
+    z-index: 9999;
+    background: rgba(0,0,0,0.18);
   }
 
-  .swal2-popup {
-    border: 3px solid black !important;
-    border-radius: 8px !important;
-    background-color: #fffbea !important;
-    box-shadow: none !important;
-    max-width: 90% !important;
-    padding: 15px !important;
-  }
-
-  .swal2-title {
-    color: #f85b2c !important;
-    font-size: clamp(16px, 4vw, 20px) !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    margin-top: 6px !important;
-    text-align: center;
-  }
-
-  .progress-bar {
-    width: 100%;
-    height: 14px;
-    border: 3px solid black;
-    border-radius: 8px;
-    background-color: #fffbea;
+  /* popup base */
+  .popup {
+    width: 420px;
+    max-width: 94%;
+    background: var(--popup-bg);
+    border: var(--border-size) solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.14);
     overflow: hidden;
-    margin-top: 15px;
+    font-weight: 800;
+    -webkit-user-select:none;
+    user-select:none;
   }
 
-  .progress-fill {
-    width: 0%;
-    height: 100%;
-    background-color: #03c9ad;
-    border-right: 3px solid black;
-    transition: width 0.7s linear;
+  /* header stripe with 3 circles + centered title text under stripe */
+  .popup-header {
+    height: 36px; /* stripe height */
+    display:flex;
+    align-items:center;
+    padding: 0 12px;
+    box-sizing:border-box;
+    border-bottom: var(--border-size) solid var(--border);
+  }
+  .header-circles {
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin-right:10px;
+  }
+  .circle {
+    width:12px;
+    height:12px;
+    border-radius:50%;
+    border: 2px solid var(--border);
+    box-sizing:border-box;
+  }
+  .header-title {
+    flex:1;
+    text-align:center;
+    font-size:18px;
+    letter-spacing:0.6px;
+    color: #000;
   }
 
-  .swal2-confirm, .swal2-cancel {
-    font-family: Consolas, monospace !important;
-    font-weight: bold !important;
-    border: 3px solid black !important;
-    border-radius: 8px !important;
-    background-color: #febf12 !important;
-    color: black !important;
-    box-shadow: none !important;
-    font-size: clamp(13px, 3.5vw, 15px) !important;
-    padding: 8px 20px !important;
+  /* content area */
+  .popup-body {
+    padding: 14px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    align-items:stretch;
   }
 
-  .popup-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-top: 10px;
+  .row {
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
   }
 
-  .popup-row img {
-    width: 40px;
-    height: auto;
-    flex-shrink: 0;
+  .icon-lg {
+    width:64px;
+    height:auto;
+    flex-shrink:0;
   }
 
   .bubble {
-    border: 3px solid black;
-    background-color: #fffbea;
+    border: var(--border-size) solid var(--border);
+    background: var(--popup-bg);
     border-radius: 8px;
-    padding: 10px 14px;
-    color: black;
+    padding: 10px 12px;
+    font-size:16px;
+    color:#000;
     white-space: pre-line;
-    font-size: clamp(14px, 3.5vw, 16px);
-    max-width: 240px;
+    max-width: calc(100% - 80px);
+    box-sizing:border-box;
   }
 
-  .typing::after {
-    content: '|';
-    animation: blink 1s infinite;
+  /* typing caret (block) */
+  .typing-caret::after{
+    content: "";
+    display:inline-block;
+    width:8px;
+    height:18px;
+    background: #000;
+    margin-left:6px;
+    animation: blink 1s steps(1) infinite;
+    vertical-align:middle;
+  }
+  @keyframes blink { 50%{ opacity:0 } }
+
+  /* progress bar */
+  .progress-wrap{
+    border: var(--border-size) solid var(--border);
+    background: var(--popup-bg);
+    padding:6px;
+    border-radius:8px;
+    display:flex;
+    gap:6px;
+    box-sizing:border-box;
+  }
+  .progress-block {
+    flex:1;
+    height:24px;
+    background: var(--progress-color);
+    opacity:0.14;
+    border-radius:6px;
+    transition: opacity 140ms linear;
   }
 
-  @keyframes blink {
-    50% { opacity: 0; }
+  /* actions */
+  .actions {
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin-top:6px;
+  }
+  .btn {
+    border: var(--border-size) solid var(--border);
+    border-radius:8px;
+    padding:8px 18px;
+    font-family: var(--font-stack);
+    font-weight:800;
+    cursor:pointer;
+    box-shadow: 0 6px 0 rgba(0,0,0,0.06);
+    font-size:15px;
+  }
+  .btn-teal {
+    background: var(--progress-color);
+    color: #fff;
+  }
+  .btn-yellow {
+    background: var(--cancel-yellow);
+    color: #000;
+  }
+  .btn-disabled {
+    opacity:0.6;
+    pointer-events:none;
   }
 
-  @media (max-width: 500px) {
-    .swal2-popup {
-      padding: 10px !important;
-    }
-    .popup-row img {
-      width: 34px;
-    }
+  /* smaller screens tweak */
+  @media (max-width:460px){
+    .popup{ width:92%; padding:0; }
+    .icon-lg{ width:50px; }
+    .bubble{ font-size:15px; max-width:calc(100% - 70px); }
+    .header-title{ font-size:16px; }
   }
+
+  /* owner log toggle */
+  #log-toggle{
+    position:fixed;
+    right:14px;
+    bottom:14px;
+    z-index:10000;
+    background:#fff;
+    border:2px solid var(--border);
+    padding:8px 10px;
+    border-radius:10px;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(0,0,0,0.12);
+  }
+  #owner-log{
+    position:fixed;
+    right:14px;
+    bottom:70px;
+    z-index:10000;
+    background:rgba(0,0,0,0.75);
+    color:#fff;
+    padding:10px;
+    border-radius:10px;
+    font-size:13px;
+    max-width:320px;
+    display:none;
+    white-space:pre-wrap;
+  }
+
 </style>
 </head>
 <body>
+
+<!-- Owner log toggle -->
+<button id="log-toggle">Ver registros</button>
+<pre id="owner-log" aria-hidden="true"></pre>
+
+<!-- Popups (hidden by default) -->
+<div id="overlay" class="overlay" style="display:none;">
+  <!-- we'll inject current popup HTML here -->
+</div>
+
 <script>
-async function typeText(element, text, delay, afterTyping) {
-  element.textContent = "";
-  for (let i = 0; i < text.length; i++) {
-    element.textContent += text[i];
-    await new Promise(r => setTimeout(r, delay));
-  }
-  if (afterTyping) afterTyping();
+/* ------------------------------
+   Utility & configuration
+   ------------------------------ */
+const config = {
+  headerColors: {
+    loading:   "#f85c2a",
+    question:  "#febf12",
+    answer:    "#01caad"
+  },
+  circleColors: {
+    loading:   "#fffbea",
+    question:  "#f85c2a",
+    answer:    "#fffbea"
+  },
+  popupBg: "#fffbea",
+  progressColor: "#03c9ad",
+  borderColor: "#000"
+};
+
+// owner log
+const clickLog = [];
+function recordChoice(choice){
+  const entry = { when: new Date().toISOString(), choice };
+  clickLog.push(entry);
+  console.log("Registro:", entry);
+  try { localStorage.setItem("popup_click_log", JSON.stringify(clickLog)); } catch(e){}
+  updateOwnerPanel();
+}
+function updateOwnerPanel(){
+  const p = document.getElementById("owner-log");
+  if(!p) return;
+  if(clickLog.length === 0) p.textContent = "Sem registros ainda.";
+  else p.textContent = clickLog.map((e,i)=> `${i+1}. [${e.when}] → ${e.choice}`).reverse().join("\n");
+}
+document.getElementById("log-toggle").addEventListener("click", () => {
+  const p = document.getElementById("owner-log");
+  if(p.style.display === "block"){ p.style.display = "none"; } else { p.style.display = "block"; updateOwnerPanel(); }
+});
+// try load previous
+try{
+  const saved = JSON.parse(localStorage.getItem("popup_click_log")||"[]");
+  if(Array.isArray(saved) && saved.length) saved.forEach(s=>clickLog.push(s));
+} catch(e){}
+
+/* ------------------------------
+   Render helpers
+   ------------------------------ */
+
+const overlay = document.getElementById("overlay");
+
+function showOverlay(html){
+  overlay.innerHTML = html;
+  overlay.style.display = "flex";
+  // prevent background scroll on mobile
+  document.body.style.overflow = "hidden";
 }
 
-async function showLoadingPopup() {
-  const swal = Swal.fire({
-    title: `<img src="./img/hourglass.png" style="width:22px;vertical-align:middle;margin-right:6px;">CARREGANDO...`,
-    html: `
-      <div class="progress-bar">
-        <div id="progress" class="progress-fill"></div>
-      </div>
-    `,
-    showConfirmButton: false,
-    showCancelButton: true,
-    cancelButtonText: "CANCELAR",
-    allowOutsideClick: false,
-    didOpen: () => simulateProgress()
-  });
+function hideOverlay(){
+  overlay.style.display = "none";
+  overlay.innerHTML = "";
+  document.body.style.overflow = "";
+}
 
-  async function simulateProgress() {
-    const progress = document.getElementById("progress");
-    for (let i = 0; i < 3; i++) {
-      progress.style.width = "0%";
-      await new Promise(r => setTimeout(r, 200));
-      progress.style.width = "100%";
-      await new Promise(r => setTimeout(r, 1000));
+/* helper to build header stripe HTML */
+function headerHTML(headerColor, circleColor, titleText){
+  return `
+    <div class="popup">
+      <div class="popup-header" style="background:${headerColor}; border-bottom:${config.borderColor} ${3}px solid;">
+        <div class="header-circles" style="margin-left:4px;">
+          <div class="circle" style="background:${circleColor}; border-color:${config.borderColor};"></div>
+          <div class="circle" style="background:${circleColor}; border-color:${config.borderColor};"></div>
+          <div class="circle" style="background:${circleColor}; border-color:${config.borderColor};"></div>
+        </div>
+        <div class="header-title" aria-hidden="true" style="font-weight:800;">${titleText}</div>
+      </div>
+      <div class="popup-body">
+  `;
+}
+
+/* ------------------------------
+   1) Loading popup (3 cycles)
+   ------------------------------ */
+function showLoadingPopup(){
+  const html = headerHTML(config.headerColors.loading, config.circleColors.loading, "CARREGANDO...") +
+    `<div style="margin-top:6px;">
+      <div class="progress-wrap" aria-hidden="true">
+        ${Array(6).fill('<div class="progress-block"></div>').join('')}
+      </div>
+     </div>
+     <div class="actions" style="margin-top:6px;">
+       <button class="btn btn-yellow btn-disabled">CANCELAR</button>
+     </div>
+    </div></div>`;
+  showOverlay(html);
+  // animate progress blocks 3x
+  const blocks = overlay.querySelectorAll(".progress-block");
+  (async ()=>{
+    for(let cycle=0; cycle<3; cycle++){
+      for(let i=0;i<blocks.length;i++){
+        blocks[i].style.opacity = "1";
+        await sleep(110);
+      }
+      await sleep(180);
+      blocks.forEach(b=>b.style.opacity = "0.14");
+      await sleep(150);
     }
+    // close loading and show question (user must click to continue)
+    hideOverlay();
     showQuestionPopup();
+  })();
+}
+
+/* ------------------------------
+   2) Question popup (user clicks)
+   ------------------------------ */
+function showQuestionPopup(){
+  const html = headerHTML(config.headerColors.question, config.circleColors.question, "JÁ ESTAMOS NAMORANDO?") +
+    `<div style="text-align:center;">
+      <!-- main question icon/title area intentionally minimal (visual matches reference) -->
+    </div>
+    <div class="actions" style="margin-top:8px;">
+      <button id="btn-no" class="btn btn-yellow">AINDA NÃO</button>
+      <button id="btn-yes" class="btn btn-teal">SIM</button>
+    </div>
+    </div></div>`;
+  showOverlay(html);
+  // attach handlers
+  document.getElementById("btn-yes").addEventListener("click", ()=>{
+    recordChoice("SIM");
+    hideOverlay();
+    showYesPopup();
+  });
+  document.getElementById("btn-no").addEventListener("click", ()=>{
+    recordChoice("AINDA NÃO");
+    hideOverlay();
+    showNoPopup();
+  });
+}
+
+/* ------------------------------
+   3) Yes popup
+   ------------------------------ */
+function showYesPopup(){
+  const html = headerHTML(config.headerColors.answer, config.circleColors.answer, "QUE ÓTIMO!") +
+    `<div class="row">
+      <img class="icon-lg" src="./img/in-love.png" alt="in love">
+      <div style="flex:1;">
+        <div class="bubble" id="yesBubble"></div>
+        <div id="yesClown" style="display:none;margin-top:8px;"></div>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="btn-close-yes" class="btn btn-yellow">FECHAR</button>
+    </div>
+    </div></div>`;
+  showOverlay(html);
+  const bubble = document.getElementById("yesBubble");
+  const clownHolder = document.getElementById("yesClown");
+  const text = "RESPOSTA POSITIVA (texto de exemplo).\n\nP.S.: (texto adicional de exemplo).";
+  typeTextPlain(bubble, text, 28, ()=>{
+    const img = document.createElement("img");
+    img.src = "./img/clown.png";
+    img.alt = "clown";
+    img.style.width = "28px";
+    img.style.height = "auto";
+    img.style.verticalAlign = "middle";
+    clownHolder.appendChild(img);
+    clownHolder.style.display = "block";
+  });
+  document.getElementById("btn-close-yes").addEventListener("click", ()=>{
+    hideOverlay();
+  });
+}
+
+/* ------------------------------
+   4) No popup
+   ------------------------------ */
+function showNoPopup(){
+  const html = headerHTML(config.headerColors.answer, config.circleColors.answer, "TUDO BEM!") +
+    `<div class="row">
+      <img class="icon-lg" src="./img/smile.png" alt="smile">
+      <div style="flex:1;">
+        <div class="bubble" id="noBubble"></div>
+        <div id="noClown" style="display:none;margin-top:8px;"></div>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="btn-close-no" class="btn btn-yellow">FECHAR</button>
+    </div>
+    </div></div>`;
+  showOverlay(html);
+  const bubble = document.getElementById("noBubble");
+  const clownHolder = document.getElementById("noClown");
+  const text = "RESPOSTA NEUTRA (texto de exemplo).\n\nP.S.: (texto adicional de exemplo).";
+  typeTextPlain(bubble, text, 28, ()=>{
+    const img = document.createElement("img");
+    img.src = "./img/clown.png";
+    img.alt = "clown";
+    img.style.width = "28px";
+    img.style.height = "auto";
+    img.style.verticalAlign = "middle";
+    clownHolder.appendChild(img);
+    clownHolder.style.display = "block";
+  });
+  document.getElementById("btn-close-no").addEventListener("click", ()=>{
+    hideOverlay();
+  });
+}
+
+/* ------------------------------
+   Utility functions
+   ------------------------------ */
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+async function typeTextPlain(el, text, speed=28, onDone){
+  el.textContent = "";
+  for(let i=0;i<text.length;i++){
+    el.textContent += text[i];
+    await sleep(speed);
   }
+  if(typeof onDone === "function") onDone();
 }
 
-async function showQuestionPopup() {
-  const result = await Swal.fire({
-    title: `<img src="./img/interrogation-mark.png" style="width:22px;vertical-align:middle;margin-right:6px;">JÁ ESTAMOS NAMORANDO?`,
-    showCancelButton: true,
-    confirmButtonText: "SIM",
-    cancelButtonText: "AINDA NÃO",
-    reverseButtons: true,
-    allowOutsideClick: false,
-  });
-
-  if (result.isConfirmed) showYesPopup();
-  else showNoPopup();
-}
-
-async function showYesPopup() {
-  await Swal.fire({
-    title: `<img src="./img/heart.png" style="width:22px;vertical-align:middle;margin-right:6px;">QUE ÓTIMO!`,
-    html: `
-      <div class="popup-row">
-        <img src="./img/in-love.png" alt="in love">
-        <div>
-          <div class="bubble typing" id="yesText"></div>
-          <div id="clownYes" style="display:none;margin-top:6px;">
-            <img src="./img/clown.png" alt="clown" style="width:24px;height:auto;vertical-align:middle;">
-          </div>
-        </div>
-      </div>
-    `,
-    confirmButtonText: "FECHAR",
-    allowOutsideClick: false,
-    didOpen: async () => {
-      const el = document.getElementById("yesText");
-      const clown = document.getElementById("clownYes");
-      const text = "Fico muito feliz!\n\nP.S.: Me comunique a decisão pois não soube desenvolver um site em que eu pudesse acessá-la.";
-      await typeText(el, text, 28, () => {
-        clown.style.display = "block";
-      });
-    }
-  });
-}
-
-async function showNoPopup() {
-  await Swal.fire({
-    title: `<img src="./img/hourglass.png" style="width:22px;vertical-align:middle;margin-right:6px;">TUDO BEM!`,
-    html: `
-      <div class="popup-row">
-        <img src="./img/smile.png" alt="smile">
-        <div>
-          <div class="bubble typing" id="noText"></div>
-          <div id="clownNo" style="display:none;margin-top:6px;">
-            <img src="./img/clown.png" alt="clown" style="width:24px;height:auto;vertical-align:middle;">
-          </div>
-        </div>
-      </div>
-    `,
-    confirmButtonText: "FECHAR",
-    allowOutsideClick: false,
-    didOpen: async () => {
-      const el = document.getElementById("noText");
-      const clown = document.getElementById("clownNo");
-      const text = "Espero que em breve role!\n\nP.S.: Me comunique a decisão pois não soube desenvolver um site em que eu pudesse acessá-la.";
-      await typeText(el, text, 28, () => {
-        clown.style.display = "block";
-      });
-    }
-  });
-}
-
-window.onload = showLoadingPopup;
+/* ------------------------------
+   Start sequence (on load)
+   ------------------------------ */
+window.addEventListener("load", ()=>{
+  // small delay for stable rendering on mobile
+  setTimeout(()=> showLoadingPopup(), 280);
+});
 </script>
 </body>
 </html>

@@ -126,7 +126,7 @@ function showYesPopup(){
   </div></div>`
   showOverlay(html)
   const bubble=document.getElementById("yesBubble")
-  const text="Oba! Então é isso!.\n\nP.S.: Me comunique a decisão pois não soube desenvolver um site em que eu pudesse acessá-la."
+  const text="Oba! Então é isso!\n\nP.S.: Me comunique a decisão pois não soube desenvolver um site em que eu pudesse acessá-la."
   typeTextWithCaret(bubble,text,28,()=>{
     const img=document.createElement("img");img.src="./img/clown.png";img.alt="clown";img.style.width="28px";img.style.height="auto";img.style.verticalAlign="middle";img.style.marginLeft="6px";bubble.appendChild(document.createTextNode(" "));bubble.appendChild(img)
   })
@@ -156,4 +156,5 @@ window.addEventListener("load",()=>{setTimeout(()=>{showLoadingPopup()},280)})
 </script>
 </body>
 </html>
+
 

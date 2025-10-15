@@ -25,16 +25,19 @@
     border-radius: 8px !important;
     background-color: #fffbea !important;
     box-shadow: none !important;
+    max-width: 90% !important;
+    padding: 15px !important;
   }
 
   .swal2-title {
     color: #f85b2c !important;
-    font-size: 20px !important;
+    font-size: clamp(16px, 4vw, 20px) !important;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    margin-top: 10px !important;
+    gap: 6px;
+    margin-top: 6px !important;
+    text-align: center;
   }
 
   .progress-bar {
@@ -63,7 +66,7 @@
     background-color: #febf12 !important;
     color: black !important;
     box-shadow: none !important;
-    font-size: 15px !important;
+    font-size: clamp(13px, 3.5vw, 15px) !important;
     padding: 8px 20px !important;
   }
 
@@ -75,8 +78,9 @@
   }
 
   .popup-row img {
-    width: 46px;
+    width: 40px;
     height: auto;
+    flex-shrink: 0;
   }
 
   .bubble {
@@ -86,7 +90,8 @@
     padding: 10px 14px;
     color: black;
     white-space: pre-line;
-    font-size: 16px;
+    font-size: clamp(14px, 3.5vw, 16px);
+    max-width: 240px;
   }
 
   .typing::after {
@@ -97,16 +102,26 @@
   @keyframes blink {
     50% { opacity: 0; }
   }
+
+  @media (max-width: 500px) {
+    .swal2-popup {
+      padding: 10px !important;
+    }
+    .popup-row img {
+      width: 34px;
+    }
+  }
 </style>
 </head>
 <body>
 <script>
-async function typeText(element, text, delay) {
+async function typeText(element, text, delay, afterTyping) {
   element.textContent = "";
   for (let i = 0; i < text.length; i++) {
     element.textContent += text[i];
     await new Promise(r => setTimeout(r, delay));
   }
+  if (afterTyping) afterTyping();
 }
 
 async function showLoadingPopup() {
@@ -158,6 +173,9 @@ async function showYesPopup() {
         <img src="./img/in-love.png" alt="in love">
         <div>
           <div class="bubble typing" id="yesText"></div>
+          <div id="clownYes" style="display:none;margin-top:6px;">
+            <img src="./img/clown.png" alt="clown" style="width:24px;height:auto;vertical-align:middle;">
+          </div>
         </div>
       </div>
     `,
@@ -165,8 +183,11 @@ async function showYesPopup() {
     allowOutsideClick: false,
     didOpen: async () => {
       const el = document.getElementById("yesText");
-      const text = "Fico muito feliz!\n\nP.S.: Me comunique a decisão pois não soube desenvolver um site em que eu pudesse acessá-la. <img src='./img/clown.png' alt='clown' style='width:22px;height:auto;vertical-align:middle;margin-left:4px;'>";
-      await typeText(el, text, 28);
+      const clown = document.getElementById("clownYes");
+      const text = "Fico muito feliz!\n\nP.S.: Me comunique a decisão pois não soube desenvolver um site em que eu pudesse acessá-la.";
+      await typeText(el, text, 28, () => {
+        clown.style.display = "block";
+      });
     }
   });
 }
@@ -179,6 +200,9 @@ async function showNoPopup() {
         <img src="./img/smile.png" alt="smile">
         <div>
           <div class="bubble typing" id="noText"></div>
+          <div id="clownNo" style="display:none;margin-top:6px;">
+            <img src="./img/clown.png" alt="clown" style="width:24px;height:auto;vertical-align:middle;">
+          </div>
         </div>
       </div>
     `,
@@ -186,8 +210,11 @@ async function showNoPopup() {
     allowOutsideClick: false,
     didOpen: async () => {
       const el = document.getElementById("noText");
-      const text = "Espero que em breve role!\n\nP.S.: Me comunique a decisão pois não soube desenvolver um site em que eu pudesse acessá-la. <img src='./img/clown.png' alt='clown' style='width:22px;height:auto;vertical-align:middle;margin-left:4px;'>";
-      await typeText(el, text, 28);
+      const clown = document.getElementById("clownNo");
+      const text = "Espero que em breve role!\n\nP.S.: Me comunique a decisão pois não soube desenvolver um site em que eu pudesse acessá-la.";
+      await typeText(el, text, 28, () => {
+        clown.style.display = "block";
+      });
     }
   });
 }

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pop-up do Amor 💛</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      background-color: #fff6d7;
+      font-family: "Consolas", monospace;
+      font-weight: bold;
+    }
+
+    .swal2-popup {
+      border: 3px solid #000;
+      border-radius: 10px !important;
+    }
+
+    .swal2-title {
+      font-size: 1.2rem !important;
+      font-weight: bold !important;
+    }
+
+    .swal2-html-container {
+      font-size: 1rem !important;
+    }
+
+    .loading-bar {
+      width: 200px;
+      height: 20px;
+      border: 2px solid #000;
+      display: flex;
+      justify-content: space-between;
+      padding: 3px;
+      background-color: #fff;
+      margin: 10px auto;
+    }
+
+    .bar-block {
+      width: 10%;
+      height: 100%;
+      background-color: #2dd4bf;
+      opacity: 0.2;
+      transition: opacity 0.1s;
+    }
+
+    .btn {
+      background-color: #00bfa5 !important;
+      color: #fff !important;
+      border: none !important;
+      font-family: "Consolas", monospace;
+      font-weight: bold;
+      padding: 8px 20px;
+      border-radius: 5px;
+      margin: 5px;
+    }
+
+    .text-bubble {
+      background-color: #ffca28;
+      padding: 15px;
+      border-radius: 10px;
+      border: 2px solid #000;
+      display: inline-block;
+      text-align: left;
+      font-size: 1rem;
+    }
+
+    .typing {
+      border-right: 2px solid #000;
+      white-space: pre-wrap;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+<script>
+  // --- Função de digitação ---
+  function typeText(el, text, speed = 30) {
+    return new Promise((resolve) => {
+      let i = 0;
+      const interval = setInterval(() => {
+        el.textContent = text.substring(0, i);
+        i++;
+        if (i > text.length) {
+          clearInterval(interval);
+          el.style.borderRight = "none";
+          resolve();
+        }
+      }, speed);
+    });
+  }
+
+  // --- Pop-up de carregamento ---
+  async function showLoading() {
+    const { value: fake } = await Swal.fire({
+      title: "CARREGANDO...",
+      html: `
+        <div class="loading-bar" id="loading-bar">
+          ${Array(10).fill('<div class="bar-block"></div>').join('')}
+        </div>
+        <button class="btn" disabled>Cancelar</button>
+      `,
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      didOpen: () => animateBar()
+    });
+  }
+
+  // --- Animação da barrinha ---
+  async function animateBar() {
+    const blocks = document.querySelectorAll(".bar-block");
+    for (let j = 0; j < 3; j++) {
+      for (let i = 0; i < blocks.length; i++) {
+        blocks[i].style.opacity = "1";
+        await new Promise(r => setTimeout(r, 100));
+      }
+      for (let b of blocks) b.style.opacity = "0.2";
+    }
+    showQuestion();
+  }
+
+  // --- Pop-up da pergunta ---
+  function showQuestion() {
+    Swal.fire({
+      title: `
+        <img src="./img/interrogation-mark.png" width="50"><br>
+        Já estamos namorando?
+      `,
+      showCancelButton: true,
+      confirmButtonText: "SIM",
+      cancelButtonText: "AINDA NÃO",
+      customClass: {
+        confirmButton: "btn",
+        cancelButton: "btn"
+      },
+      allowOutsideClick: false,
+      backdrop: false
+    }).then((result) => {
+      if (result.isConfirmed) showYesPopup();
+      else showNoPopup();
+    });
+  }
+
+  // --- Pop-up de resposta "SIM" ---
+  async function showYesPopup() {
+    Swal.fire({
+      title: `<img src="./img/heart.png" width="40">`,
+      html: `
+        <div style="display:flex; align-items:flex-start; gap:10px;">
+          <img src="./img/in love.png" width="60">
+          <div class="text-bubble typing" id="yesText"></div>
+        </div>
+      `,
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      backdrop: false,
+      didOpen: async () => {
+        const el = document.getElementById("yesText");
+        const text = `Que ótimo! Fico muito feliz!\n\nP.S.: Me comunique a decisão pois não soube desenvolver um site em que eu pudesse acessá-la. 🤡`;
+        await typeText(el, text, 30);
+      }
+    });
+  }
+
+  // --- Pop-up de resposta "NÃO" ---
+  async function showNoPopup() {
+    Swal.fire({
+      title: `<img src="./img/hourglass.png" width="40">`,
+      html: `
+        <div style="display:flex; align-items:flex-start; gap:10px;">
+          <img src="./img/smile.png" width="60">
+          <div class="text-bubble typing" id="noText"></div>
+        </div>
+      `,
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      backdrop: false,
+      didOpen: async () => {
+        const el = document.getElementById("noText");
+        const text = `Tudo bem! Espero que em breve role!\n\nP.S.: Me comunique a decisão pois não soube desenvolver um site em que eu pudesse acessá-la. 🤡`;
+        await typeText(el, text, 30);
+      }
+    });
+  }
+
+  // --- Início ---
+  showLoading();
+</script>
+</body>
+</html>

@@ -1,191 +1,202 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pop-up do Amor 💛</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pop-up amorgen</title>
+  <!-- SweetAlert2 via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
-    body {
-      background-color: #fff6d7;
-      font-family: "Consolas", monospace;
-      font-weight: bold;
+    /* page */
+    html,body{
+      height:100%;
+      margin:0;
+      background: #fff6d7;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
 
+    /* SweetAlert base override to match reference */
     .swal2-popup {
-      border: 3px solid #000;
-      border-radius: 10px !important;
+      width: 420px !important;
+      max-width: 92% !important;
+      background: linear-gradient(180deg, #fffbe8 0%, #fff2ce 100%) !important;
+      border: 6px solid #2b1f14 !important; /* thick dark border like reference */
+      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+      border-radius: 16px !important;
+      padding: 18px !important;
     }
 
     .swal2-title {
-      font-size: 1.2rem !important;
-      font-weight: bold !important;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      justify-content:center;
+      font-weight:800 !important;
+      font-size:20px !important;
+      color:#1a1a1a;
+      margin:0 0 8px;
     }
 
     .swal2-html-container {
-      font-size: 1rem !important;
+      color:#1a1a1a;
+      font-size:15px;
+      line-height:1.45;
+      text-align:left;
+      padding:0;
     }
 
-    .loading-bar {
-      width: 200px;
-      height: 20px;
-      border: 2px solid #000;
-      display: flex;
-      justify-content: space-between;
-      padding: 3px;
-      background-color: #fff;
-      margin: 10px auto;
+    /* custom "speech bubble" used inside html */
+    .bubble {
+      background: #ffd867;
+      border: 3px solid #1a1a1a;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display:inline-block;
+      max-width: 260px;
+      box-shadow: inset 0 -4px 0 rgba(0,0,0,0.03);
+      font-weight:600;
     }
 
-    .bar-block {
-      width: 10%;
-      height: 100%;
-      background-color: #2dd4bf;
-      opacity: 0.2;
-      transition: opacity 0.1s;
-    }
-
-    .btn {
-      background-color: #00bfa5 !important;
-      color: #fff !important;
-      border: none !important;
-      font-family: "Consolas", monospace;
-      font-weight: bold;
-      padding: 8px 20px;
-      border-radius: 5px;
-      margin: 5px;
-    }
-
-    .text-bubble {
-      background-color: #ffca28;
-      padding: 15px;
-      border-radius: 10px;
-      border: 2px solid #000;
-      display: inline-block;
-      text-align: left;
-      font-size: 1rem;
-    }
-
+    /* typing cursor */
     .typing {
-      border-right: 2px solid #000;
       white-space: pre-wrap;
       overflow: hidden;
+      border-right: 3px solid #1a1a1a;
+      padding-right:6px;
+    }
+
+    /* buttons */
+    .swal2-actions {
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      margin-top:14px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg,#ff7a7a,#ff5a5a);
+      color:white;
+      border:3px solid #2b1f14;
+      padding:10px 18px;
+      border-radius:12px;
+      font-weight:800;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.08);
+    }
+    .btn-secondary {
+      background: linear-gradient(180deg,#fff,#ffe8b0);
+      color:#1a1a1a;
+      border:3px solid #2b1f14;
+      padding:10px 18px;
+      border-radius:12px;
+      font-weight:800;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.04);
+    }
+    .swal2-confirm, .swal2-cancel {
+      font-family: inherit !important;
+      font-weight:800 !important;
+      border-radius:12px !important;
+    }
+
+    /* loading bar style */
+    .loading-bar {
+      width: 320px;
+      max-width:90%;
+      height:22px;
+      border-radius:10px;
+      border:3px solid #2b1f14;
+      padding:4px;
+      background:#fff;
+      display:flex;
+      gap:6px;
+      margin:10px auto 6px;
+      box-sizing:border-box;
+    }
+    .loading-block{
+      flex:1;
+      background:#ffbf00;
+      opacity:0.12;
+      border-radius:6px;
+      transition:opacity 160ms ease;
+    }
+
+    /* icons inside popups */
+    .icon-left { width:72px; height:auto; border-radius:8px; }
+    .popup-row { display:flex; gap:12px; align-items:flex-start; }
+
+    /* small on-screen log panel (for dev/owner) */
+    #owner-log {
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding:10px 12px;
+      border-radius:10px;
+      font-size:13px;
+      z-index:999999;
+      max-width:320px;
+      display:none; /* hidden by default - toggle with button below */
+    }
+    #log-toggle {
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      z-index:999999;
+      background:#fff;
+      border:2px solid #2b1f14;
+      padding:8px 10px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:700;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
+
+    @media(max-width:480px){
+      .swal2-popup{ width:92% !important; padding:12px !important; border-radius:12px !important; }
+      .icon-left{ width:56px; }
+      .bubble{ max-width:160px; font-size:14px; }
     }
   </style>
 </head>
 <body>
+
+<!-- small toggle for owner to view logged clicks -->
+<button id="log-toggle" title="Mostrar/ocultar registro">Ver registros</button>
+<div id="owner-log" aria-hidden="true"></div>
+
 <script>
-  // --- Função de digitação ---
-  function typeText(el, text, speed = 30) {
-    return new Promise((resolve) => {
-      let i = 0;
-      const interval = setInterval(() => {
-        el.textContent = text.substring(0, i);
-        i++;
-        if (i > text.length) {
-          clearInterval(interval);
-          el.style.borderRight = "none";
-          resolve();
-        }
-      }, speed);
-    });
-  }
-
-  // --- Pop-up de carregamento ---
-  async function showLoading() {
-    const { value: fake } = await Swal.fire({
-      title: "CARREGANDO...",
-      html: `
-        <div class="loading-bar" id="loading-bar">
-          ${Array(10).fill('<div class="bar-block"></div>').join('')}
-        </div>
-        <button class="btn" disabled>Cancelar</button>
-      `,
-      showConfirmButton: false,
-      allowOutsideClick: false,
-      didOpen: () => animateBar()
-    });
-  }
-
-  // --- Animação da barrinha ---
-  async function animateBar() {
-    const blocks = document.querySelectorAll(".bar-block");
-    for (let j = 0; j < 3; j++) {
-      for (let i = 0; i < blocks.length; i++) {
-        blocks[i].style.opacity = "1";
-        await new Promise(r => setTimeout(r, 100));
+/* ---------- Utility: typing effect ---------- */
+function typeText(el, text, speed = 24) {
+  return new Promise(resolve => {
+    let i = 0;
+    el.textContent = "";
+    el.style.borderRight = "3px solid #1a1a1a";
+    const t = setInterval(() => {
+      el.textContent = text.slice(0, i);
+      i++;
+      if(i > text.length){
+        clearInterval(t);
+        el.style.borderRight = "none";
+        resolve();
       }
-      for (let b of blocks) b.style.opacity = "0.2";
-    }
-    showQuestion();
-  }
+    }, speed);
+  });
+}
 
-  // --- Pop-up da pergunta ---
-  function showQuestion() {
-    Swal.fire({
-      title: `
-        <img src="./img/interrogation-mark.png" width="50"><br>
-        Já estamos namorando?
-      `,
-      showCancelButton: true,
-      confirmButtonText: "SIM",
-      cancelButtonText: "AINDA NÃO",
-      customClass: {
-        confirmButton: "btn",
-        cancelButton: "btn"
-      },
-      allowOutsideClick: false,
-      backdrop: false
-    }).then((result) => {
-      if (result.isConfirmed) showYesPopup();
-      else showNoPopup();
-    });
-  }
+/* ---------- A simple client-side log (so you can see who clicked what) ---------- */
+const clickLog = []; // will hold timestamped choices
 
-  // --- Pop-up de resposta "SIM" ---
-  async function showYesPopup() {
-    Swal.fire({
-      title: `<img src="./img/heart.png" width="40">`,
-      html: `
-        <div style="display:flex; align-items:flex-start; gap:10px;">
-          <img src="./img/in love.png" width="60">
-          <div class="text-bubble typing" id="yesText"></div>
-        </div>
-      `,
-      showConfirmButton: false,
-      allowOutsideClick: false,
-      backdrop: false,
-      didOpen: async () => {
-        const el = document.getElementById("yesText");
-        const text = `Que ótimo! Fico muito feliz!\n\nP.S.: Me comunique a decisão pois não soube desenvolver um site em que eu pudesse acessá-la. 🤡`;
-        await typeText(el, text, 30);
-      }
-    });
-  }
+function recordChoice(choice, meta = {}) {
+  const entry = {
+    when: new Date().toISOString(),
+    choice,
+    meta
+  };
+  clickLog.push(entry);
+  console.log("Pop-up click registrado:", entry);
 
-  // --- Pop-up de resposta "NÃO" ---
-  async function showNoPopup() {
-    Swal.fire({
-      title: `<img src="./img/hourglass.png" width="40">`,
-      html: `
-        <div style="display:flex; align-items:flex-start; gap:10px;">
-          <img src="./img/smile.png" width="60">
-          <div class="text-bubble typing" id="noText"></div>
-        </div>
-      `,
-      showConfirmButton: false,
-      allowOutsideClick: false,
-      backdrop: false,
-      didOpen: async () => {
-        const el = document.getElementById("noText");
-        const text = `Tudo bem! Espero que em breve role!\n\nP.S.: Me comunique a decisão pois não soube desenvolver um site em que eu pudesse acessá-la. 🤡`;
-        await typeText(el, text, 30);
-      }
-    });
-  }
-
-  // --- Início ---
-  showLoading();
-</script>
-</body>
-</html>
+  // show in owner panel if visible
+  const panel = d
